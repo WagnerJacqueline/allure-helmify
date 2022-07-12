@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "allure-helmify.fullname" . }}-config-map
+  labels:
+  {{- include "allure-helmify.labels" . | nindent 4 }}
+data:
+  CHECK_RESULTS_EVERY_SECONDS: {{ .Values.configMap.checkResultsEverySeconds | quote
+    }}
+  KEEP_HISTORY: {{ .Values.configMap.keepHistory | quote }}
+  MAKE_VIEWER_ENDPOINTS_PUBLIC: {{ .Values.configMap.makeViewerEndpointsPublic |
+    quote }}
+  SECURITY_ENABLED: {{ .Values.configMap.securityEnabled | quote }}
+  TLS: {{ .Values.configMap.tls | quote }}
+  URL_PREFIX: {{ .Values.configMap.urlPrefix | quote }}

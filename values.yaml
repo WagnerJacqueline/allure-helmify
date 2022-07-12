@@ -1,0 +1,39 @@
+configMap:
+  checkResultsEverySeconds: NONE
+  keepHistory: "1"
+  makeViewerEndpointsPublic: "0"
+  securityEnabled: "1"
+  tls: "0"
+  urlPrefix: /allure-api
+configUiMap:
+  allureDockerPublicApiUrl: localdomain.at
+  allureDockerPublicApiUrlPrefix: /allure-api
+  urlPrefix: /allure-ui
+deployment:
+  allure:
+    image:
+      repository: frankescobar/allure-docker-service
+      tag: 2.17.2
+  allureUi:
+    image:
+      repository: frankescobar/allure-docker-service-ui
+      tag: 7.0.3
+  replicas: 1
+kubernetesClusterDomain: cluster.local
+pvc:
+  persistentVolumeClaim:
+    storageRequest: 3Gi
+secret:
+  securityPass: "admin"
+  securityUser: "admin"
+  securityViewerPass: "user"
+  securityViewerUser: "user"
+serviceLoadBalancer:
+  ports:
+  - name: allure-api
+    port: 6060
+    targetPort: 5050
+  - name: allure-ui
+    port: 7070
+    targetPort: 5252
+  type: LoadBalancer

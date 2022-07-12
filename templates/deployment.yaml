@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "allure-helmify.fullname" . }}-deployment
+  labels:
+  {{- include "allure-helmify.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      type: app
+    {{- include "allure-helmify.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        type: app
+      {{- include "allure-helmify.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "allure-helmify.fullname" . }}-config-map
+        - secretRef:
+            name: {{ include "allure-helmify.fullname" . }}-secret
+        image: {{ .Values.deployment.allure.image.repository }}:{{ .Values.deployment.allure.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: Always
+        name: allure
+        ports:
+        - containerPort: 5050
+        resources: {}
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+        volumeMounts:
+        - mountPath: /app/projects
+          name: reports-volume
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ .Values.kubernetesClusterDomain }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "allure-helmify.fullname" . }}-config-ui-map
+        image: {{ .Values.deployment.allureUi.image.repository }}:{{ .Values.deployment.allureUi.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: Always
+        name: allure-ui
+        ports:
+        - containerPort: 5252
+        resources: {}
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+      volumes:
+      - name: reports-volume
+        persistentVolumeClaim:
+          claimName: {{ include "allure-helmify.fullname" . }}-persistent-volume-claim

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "allure-helmify.fullname" . }}-config-ui-map
+  labels:
+  {{- include "allure-helmify.labels" . | nindent 4 }}
+data:
+  ALLURE_DOCKER_PUBLIC_API_URL: {{ .Values.configUiMap.allureDockerPublicApiUrl |
+    quote }}
+  ALLURE_DOCKER_PUBLIC_API_URL_PREFIX: {{ .Values.configUiMap.allureDockerPublicApiUrlPrefix
+    | quote }}
+  URL_PREFIX: {{ .Values.configUiMap.urlPrefix | quote }}
